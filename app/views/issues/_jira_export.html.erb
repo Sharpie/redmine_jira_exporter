@@ -3,6 +3,9 @@
     <div class="flash warning">
       <h1>We've Moved!</h1>
       <p>Ticket tracking is now hosted in JIRA: <a href="<%= ::RedmineJIRAExporter.settings[:jira_baseurl] %>"><%= ::RedmineJIRAExporter.settings[:jira_baseurl] %></a></p>
+      <% if @issue.jira_url? %>
+      <p>This ticket is now tracked at: <a href="<%= @issue.jira_url %>"><%= @issue.jira_url %></a></p>
+      <% end %>
     </div>
   </td>
 </tr>

@@ -18,6 +18,11 @@ module RedmineJIRAExporter
         return ''
       end
 
+      unless issue.has_attribute? :jira_url
+        Rails.logger.error "jira_export_hook: Issue objects do not have the jira_url column. A database migration may be required. View hook aborting."
+        return ''
+      end
+
       if project.nil?
         Rails.logger.error "jira_export_hook: No project in context for issue #{issue.id}. View hook aborting."
         return ''
