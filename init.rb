@@ -12,4 +12,9 @@ Redmine::Plugin.register File.basename(File.dirname(__FILE__)).intern do
   author 'Charlie Sharpsteen'
   description 'This plugin exports selected issues from Redmine to JIRA.'
   version '0.0.1'
+
+  project_module :jira_export do
+    permission :view_jira_exports, {:jira_export => :view}
+    permission :create_jira_exports, {:jira_export => :create}
+  end
 end
