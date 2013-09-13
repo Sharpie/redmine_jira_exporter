@@ -6,7 +6,13 @@ module RedmineJIRAExporter
       issue = context [:issue]
       project = context[:project]
 
-      # Attempt to handle allthethings
+      # Attempt to log allthethings that can go wrong
+      if ::RedmineJIRAExporter.settings[:project_map].nil?
+        Rails.logger.error "jira_export_hook: project_map hash not in settings.yaml. View hook aborting."
+        return ''
+      end
+      jira_project = ::RedmineJIRAExporter.settings[:project_map][project.name]
+
       if issue.nil?
         Rails.logger.error "jira_export_hook: No issue in context. View hook aborting."
         return ''
@@ -14,6 +20,11 @@ module RedmineJIRAExporter
 
       if project.nil?
         Rails.logger.error "jira_export_hook: No project in context for issue #{issue.id}. View hook aborting."
+        return ''
+      end
+
+      unless project.module_enabled?(:jira_export) and not jira_project.nil?
+        Rails.logger.error "jira_export_hook: JIRA export enabled for Redmine project #{project.name}, but no entry in project_map from settings.yaml. View hook aborting." if jira_project.nil?
         return ''
       end
 
