@@ -1,8 +1,9 @@
 class CreateJiraExports < ActiveRecord::Migration
-  def change
-    create_table :jira_exports do |t|
-      t.integer :issue_id
-      t.string :jira_url
-    end
+  def up
+    add_column :issues, :jira_url, :string
+  end
+
+  def down
+    remove_column :issues, :jira_url
   end
 end
