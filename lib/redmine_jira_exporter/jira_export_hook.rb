@@ -3,6 +3,19 @@ module RedmineJIRAExporter
 
     def view_issues_show_details_bottom context = {}
       user = User.current
+      issue = context [:issue]
+      project = context[:project]
+
+      # Attempt to handle allthethings
+      if issue.nil?
+        Rails.logger.error "jira_export_hook: No issue in context. View hook aborting."
+        return ''
+      end
+
+      if project.nil?
+        Rails.logger.error "jira_export_hook: No project in context for issue #{issue.id}. View hook aborting."
+        return ''
+      end
 
       return '' unless user.allowed_to? :view_jira_exports, context[:project]
 
