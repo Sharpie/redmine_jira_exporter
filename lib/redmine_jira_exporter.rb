@@ -5,3 +5,4 @@ module RedmineJIRAExporter
 end
 
 require 'redmine_jira_exporter/jira_export_hook'
+require 'redmine_jira_exporter/jira_export_controller_patch'
