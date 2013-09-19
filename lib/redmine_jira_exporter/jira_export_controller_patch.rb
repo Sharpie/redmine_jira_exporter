@@ -4,8 +4,12 @@ module RedmineJiraExporter
     def export_to_jira
       # FIXME: This should be a before_filter
       find_issue # <-- populates @issue
+      project = @issue.project
 
-      # TODO: Check authorization!
+      unless User.current.allowed_to? :create_jira_exports, project
+        deny_access
+        return
+      end
 
       # TODO: Encase this in Issue.transaction
       @issue.jira_url = 'https://jira6-public.puppetlabs.com/browse/TEST-13'
