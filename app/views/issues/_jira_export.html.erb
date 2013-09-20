@@ -5,7 +5,7 @@
       <p>Ticket tracking is now hosted in JIRA: <a href="<%= ::RedmineJIRAExporter.settings[:jira_baseurl] %>"><%= ::RedmineJIRAExporter.settings[:jira_baseurl] %></a></p>
       <% if @issue.jira_url? %>
       <p>This ticket is now tracked at: <a href="<%= @issue.jira_url %>"><%= @issue.jira_url %></a></p>
-      <% else %>
+      <% elsif User.current.allowed_to? :create_jira_exports, @project %>
         <p>Interested in this issue? <%= link_to("Click here to export this ticket to JIRA.", { :controller => 'issues', :action => 'export_to_jira',   :id => @issue }, :method => 'post') %></p>
       <% end %>
     </div>
