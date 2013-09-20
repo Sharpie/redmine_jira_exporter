@@ -15,8 +15,13 @@ module RedmineJiraExporter
         return
       end
 
-      post_to_jira
-      flash[:notice] = 'Issue successfully exported to JIRA.'
+      if @issue.jira_url?
+        flash[:warning] = 'Issue already exported to JIRA.'
+        Rails.logger.warn "jira_export_controller: Issue already exported to #{@issue.jira_url}"
+      else
+        post_to_jira
+        flash[:notice] = 'Issue successfully exported to JIRA.'
+      end
 
       # Need to use this instead of `redirect_to`. Otherwise changes don't show
       # up until the view is reloaded.
