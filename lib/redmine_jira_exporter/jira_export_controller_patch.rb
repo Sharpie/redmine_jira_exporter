@@ -42,11 +42,24 @@ module RedmineJiraExporter
         return false
       end
 
-      # TODO: Error handling for this!
       jira_baseurl = URI.parse ::RedmineJIRAExporter.settings[:jira_baseurl]
       jira_username = ::RedmineJIRAExporter.settings[:jira_username]
       jira_password = ::RedmineJIRAExporter.settings[:jira_password]
+      if jira_baseurl.nil? or jira_username.nil? or jira_password.nil?
+        Rails.logger.error "jira_export_controller: JIRA URL and credentials not supplied in settings.yaml"
+        return false
+      end
+
+      if ::RedmineJIRAExporter.settings[:project_map].nil?
+        Rails.logger.error "jira_export_controller: project_map hash not in settings.yaml"
+        return false
+      end
+
       jira_project = ::RedmineJIRAExporter.settings[:project_map][project.name]
+      unless project.module_enabled?(:jira_export) and not jira_project.nil?
+        Rails.logger.error "jira_export_controller: JIRA export enabled for redmine project #{project.name}, but no entry in project_map from settings.yaml" if jira_project.nil?
+        return false
+      end
 
       client = Net::HTTP.new jira_baseurl.host, jira_baseurl.port
       client.use_ssl = true
