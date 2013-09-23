@@ -37,6 +37,11 @@ module RedmineJiraExporter
         return false
       end
 
+      if @issue.closed?
+        Rails.logger.warn "jira_export_controller: Issue ##{@issue.id} is closed, not exporting."
+        return false
+      end
+
       # TODO: Error handling for this!
       jira_baseurl = URI.parse ::RedmineJIRAExporter.settings[:jira_baseurl]
       jira_username = ::RedmineJIRAExporter.settings[:jira_username]
