@@ -15,12 +15,10 @@ module RedmineJiraExporter
         return
       end
 
-      if @issue.jira_url?
-        flash[:warning] = 'Issue already exported to JIRA.'
-        Rails.logger.warn "jira_export_controller: Issue already exported to #{@issue.jira_url}"
-      else
-        post_to_jira
+      if post_to_jira
         flash[:notice] = 'Issue successfully exported to JIRA.'
+      else
+        flash[:warning] = 'Failed to export issue to JIRA.'
       end
 
       # Need to use this instead of `redirect_to`. Otherwise changes don't show
@@ -33,6 +31,11 @@ module RedmineJiraExporter
     def post_to_jira
       jira_api_path = 'rest/api/2'
       project = @issue.project
+
+      if @issue.jira_url?
+        Rails.logger.warn "jira_export_controller: Issue already exported to #{@issue.jira_url}"
+        return false
+      end
 
       # TODO: Error handling for this!
       jira_baseurl = URI.parse ::RedmineJIRAExporter.settings[:jira_baseurl]
@@ -91,6 +94,8 @@ module RedmineJiraExporter
 
       @issue.jira_url = File.join(jira_baseurl.to_s, 'browse', jira_id)
       @issue.save
+
+      return true
 
     end
   end
