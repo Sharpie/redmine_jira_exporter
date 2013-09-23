@@ -1,3 +1,0 @@
-= redmine_jira_exporter
-
-Description goes here
