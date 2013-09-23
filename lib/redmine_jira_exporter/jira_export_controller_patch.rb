@@ -83,9 +83,17 @@ module RedmineJiraExporter
       request.body = issue_data.to_json
       request['content-type'] = 'application/json'
 
-      # TODO: Error handling!
       resp = client.request request
+      unless resp.kind_of? Net::HTTPSuccess
+        Rails.logger.error "jira_export_controller: JIRA issue creation failed with code: #{resp.code}"
+        return false
+      end
       jira_id = JSON.load(resp.body)['key']
+
+      # At this point, the ticket has been created in JIRA, so save the URL to
+      # the database
+      @issue.jira_url = File.join(jira_baseurl.to_s, 'browse', jira_id)
+      @issue.save
 
       remote_link_data = {
         'application' => {
@@ -107,11 +115,12 @@ module RedmineJiraExporter
       request.body = remote_link_data.to_json
       request['content-type'] = 'application/json'
 
-      # TODO: Error handling!
       resp = client.request request
-
-      @issue.jira_url = File.join(jira_baseurl.to_s, 'browse', jira_id)
-      @issue.save
+      unless resp.kind_of? Net::HTTPSuccess
+        Rails.logger.error "jira_export_controller: JIRA issue crosslinking failed with code: #{resp.code}"
+        # Don't return false, because at this point there is an exported ticket
+        # in JIRA.
+      end
 
       return true
 
