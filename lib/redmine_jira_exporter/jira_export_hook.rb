@@ -1,5 +1,5 @@
 module RedmineJIRAExporter
-  class JIRAExportListener < Redmine::Hook::ViewListener
+  class JIRAExportHook < Redmine::Hook::ViewListener
 
     def view_issues_show_details_bottom context = {}
       user = User.current
@@ -33,7 +33,7 @@ module RedmineJIRAExporter
         return ''
       end
 
-      return '' unless user.allowed_to? :view_jira_exports, context[:project]
+      return '' unless user.allowed_to? :view_jira_exports, project
 
       render context, :partial => 'issues/jira_export'
     end
