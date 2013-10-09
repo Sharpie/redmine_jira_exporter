@@ -32,6 +32,8 @@ module RedmineJiraExporter
       jira_api_path = 'rest/api/2'
       project = @issue.project
 
+      return false unless project.module_enabled?(:jira_export)
+
       if @issue.jira_url?
         Rails.logger.warn "jira_export_controller: Issue already exported to #{@issue.jira_url}"
         return false
@@ -56,7 +58,7 @@ module RedmineJiraExporter
       end
 
       jira_project = ::RedmineJIRAExporter.settings[:project_map][project.name]
-      unless project.module_enabled?(:jira_export) and not jira_project.nil?
+      if jira_project.nil?
         Rails.logger.error "jira_export_controller: JIRA export enabled for redmine project #{project.name}, but no entry in project_map from settings.yaml" if jira_project.nil?
         return false
       end
