@@ -97,32 +97,37 @@ module RedmineJiraExporter
       @issue.jira_url = File.join(jira_baseurl.to_s, 'browse', jira_id)
       @issue.save
 
-      remote_link_data = {
-        'application' => {
-          'name' => 'Puppet Labs Redmine'
-        },
-        'relationship' => 'clones',
-        'object' => {
-          'url'   => url_for(@issue),
-          'title' => "(##{@issue.id}) #{@issue.subject}",
-          'icon'  => {
-            'url16x16' => 'http://projects.puppetlabs.com/favicon.ico',
-            'title'    => 'Redmine'
+      # Add remote links for this issue and each issue linked to it or from it.
+      @issue.relations.map{|r| [r.issue_to, r.issue_from]}.flatten.uniq.each do |i|
+
+        remote_link_data = {
+          'application' => {
+            'name' => 'Puppet Labs Redmine'
+          },
+          'relationship' => ( (i.id == @issue.id) ? 'clones' : 'relates to' ),
+          'object' => {
+            'url'   => url_for(i),
+            'title' => "(##{i.id}) #{i.subject}",
+            'icon'  => {
+              'url16x16' => 'http://projects.puppetlabs.com/favicon.ico',
+              'title'    => 'Redmine'
+            }
           }
         }
-      }
 
-      request = Net::HTTP::Post.new File.join(jira_baseurl.request_uri, jira_api_path, 'issue', jira_id, 'remotelink')
-      request.basic_auth jira_username, jira_password
-      request.body = remote_link_data.to_json
-      request['content-type'] = 'application/json'
+        request = Net::HTTP::Post.new File.join(jira_baseurl.request_uri, jira_api_path, 'issue', jira_id, 'remotelink')
+        request.basic_auth jira_username, jira_password
+        request.body = remote_link_data.to_json
+        request['content-type'] = 'application/json'
 
-      resp = client.request request
-      unless resp.kind_of? Net::HTTPSuccess
-        Rails.logger.error "jira_export_controller: JIRA issue crosslinking failed with code: #{resp.code}"
-        # Don't return false, because at this point there is an exported ticket
-        # in JIRA.
-      end
+        resp = client.request request
+        unless resp.kind_of? Net::HTTPSuccess
+          Rails.logger.error "jira_export_controller: JIRA issue crosslinking failed with code: #{resp.code}"
+          # Don't return false, because at this point there is an exported ticket
+          # in JIRA.
+        end
+
+      end # End big ugly issue loop
 
       return true
 
