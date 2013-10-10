@@ -106,7 +106,7 @@ Redmine Issue [##{@issue.id}](#{url_for(@issue)}) has been migrated to JIRA:
       @issue.init_journal(User.current, journal_note).save
 
       # Add remote links for this issue and each issue linked to it or from it.
-      @issue.relations.map{|r| [r.issue_to, r.issue_from]}.flatten.uniq.each do |i|
+      @issue.relations.map{|r| [r.issue_to, r.issue_from]}.concat([@issue]).flatten.uniq.each do |i|
 
         remote_link_data = {
           'application' => {
