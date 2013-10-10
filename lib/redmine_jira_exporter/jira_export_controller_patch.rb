@@ -97,6 +97,14 @@ module RedmineJiraExporter
       @issue.jira_url = File.join(jira_baseurl.to_s, 'browse', jira_id)
       @issue.save
 
+      # Also persist a new Journal entry to trigger email notifications.
+      journal_note = <<-EOF
+Redmine Issue [##{@issue.id}](#{url_for(@issue)}) has been migrated to JIRA:
+
+  <#{@issue.jira_url}>
+        EOF
+      @issue.init_journal(User.current, journal_note).save
+
       # Add remote links for this issue and each issue linked to it or from it.
       @issue.relations.map{|r| [r.issue_to, r.issue_from]}.flatten.uniq.each do |i|
 
