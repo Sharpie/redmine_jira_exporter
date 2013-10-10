@@ -15,7 +15,7 @@ else
     name 'Redmine JIRA Exporter plugin'
     author 'Charlie Sharpsteen'
     description 'This plugin exports selected issues from Redmine to JIRA.'
-    version '0.1.1'
+    version '0.2.0'
 
     project_module :jira_export do
       permission :view_jira_exports, {:jira_export => :view}
