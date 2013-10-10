@@ -64,7 +64,7 @@ module RedmineJiraExporter
       end
 
       client = Net::HTTP.new jira_baseurl.host, jira_baseurl.port
-      client.use_ssl = false
+      client.use_ssl = jira_baseurl.scheme == 'https'
 
       issue_data = {
         "fields" => {
