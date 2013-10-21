@@ -2,10 +2,10 @@ require 'redmine_jira_exporter'
 
 # Redmine doesn't have an obvious way to do per-project settings. So, as a
 # workaround we load from a local `settings.yaml` file.
-RedmineJIRAExporter.settings = YAML.load_file File.join(File.dirname(__FILE__), 'settings.yaml') rescue nil
+RedmineJiraExporter.settings = YAML.load_file File.join(File.dirname(__FILE__), 'settings.yaml') rescue nil
 
 
-if RedmineJIRAExporter.settings.nil?
+if RedmineJiraExporter.settings.nil?
   Rails.logger.error "jira_export_plugin: Failed to load settings file: #{File.join(File.dirname(__FILE__))}"
 else
   # The File.basename hackery is so we can rename the plugin directory to

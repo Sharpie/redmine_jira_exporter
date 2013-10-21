@@ -3,7 +3,7 @@ require 'uri'
 require 'json'
 
 module RedmineJiraExporter
-  module JiraExportControllerPatch
+  module ControllerPatch
 
     def export_to_jira
       # FIXME: This should be a before_filter
@@ -44,20 +44,20 @@ module RedmineJiraExporter
         return false
       end
 
-      jira_baseurl = URI.parse ::RedmineJIRAExporter.settings[:jira_baseurl]
-      jira_username = ::RedmineJIRAExporter.settings[:jira_username]
-      jira_password = ::RedmineJIRAExporter.settings[:jira_password]
+      jira_baseurl = URI.parse RedmineJiraExporter.settings[:jira_baseurl]
+      jira_username = RedmineJiraExporter.settings[:jira_username]
+      jira_password = RedmineJiraExporter.settings[:jira_password]
       if jira_baseurl.nil? or jira_username.nil? or jira_password.nil?
         Rails.logger.error "jira_export_controller: JIRA URL and credentials not supplied in settings.yaml"
         return false
       end
 
-      if ::RedmineJIRAExporter.settings[:project_map].nil?
+      if RedmineJiraExporter.settings[:project_map].nil?
         Rails.logger.error "jira_export_controller: project_map hash not in settings.yaml"
         return false
       end
 
-      jira_project = ::RedmineJIRAExporter.settings[:project_map][project.name]
+      jira_project = RedmineJiraExporter.settings[:project_map][project.name]
       if jira_project.nil?
         Rails.logger.error "jira_export_controller: JIRA export enabled for redmine project #{project.name}, but no entry in project_map from settings.yaml" if jira_project.nil?
         return false
@@ -143,7 +143,7 @@ Redmine Issue [##{@issue.id}](#{url_for(@issue)}) has been migrated to JIRA:
   end
 end
 
-IssuesController.send :include, RedmineJiraExporter::JiraExportControllerPatch
+IssuesController.send :include, RedmineJiraExporter::ControllerPatch
 # Skip the authorize function as we have some specific issue/project
 # interaction to take care of.
 IssuesController.send :skip_before_filter, :authorize, :only => [:export_to_jira]

@@ -1,5 +1,5 @@
-module RedmineJIRAExporter
-  class JIRAExportHook < Redmine::Hook::ViewListener
+module RedmineJiraExporter
+  class IssueViewHook < Redmine::Hook::ViewListener
 
     def view_issues_show_details_bottom context = {}
       user = User.current
@@ -16,11 +16,11 @@ module RedmineJIRAExporter
       return '' unless project.module_enabled? :jira_export
       return '' unless user.allowed_to? :view_jira_exports, project
 
-      if ::RedmineJIRAExporter.settings[:project_map].nil?
+      if RedmineJiraExporter.settings[:project_map].nil?
         Rails.logger.error "jira_export_hook: project_map hash not in settings.yaml. View hook aborting."
         return ''
       end
-      jira_project = ::RedmineJIRAExporter.settings[:project_map][project.name]
+      jira_project = RedmineJiraExporter.settings[:project_map][project.name]
 
       if jira_project.nil?
         Rails.logger.error "jira_export_hook: JIRA export enabled for Redmine project #{project.name}, but no entry in project_map from settings.yaml. View hook aborting."
