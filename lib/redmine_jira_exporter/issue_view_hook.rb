@@ -23,8 +23,7 @@ module RedmineJiraExporter
       jira_project = RedmineJiraExporter.settings[:project_map][project.name]
 
       if jira_project.nil?
-        Rails.logger.error "jira_export_hook: JIRA export enabled for Redmine project #{project.name}, but no entry in project_map from settings.yaml. View hook aborting."
-        return ''
+        Rails.logger.debug "jira_export_hook: JIRA export enabled for Redmine project #{project.name}, but no entry in project_map from settings.yaml."
       end
 
       if issue.nil?
@@ -37,6 +36,7 @@ module RedmineJiraExporter
         return ''
       end
 
+      context[:jira_export_available] = (not jira_project.nil?) && (not issue.closed?) && user.allowed_to?(:create_jira_exports, project)
       render context, :partial => 'issues/jira_export'
     end
 
