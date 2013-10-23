@@ -6,7 +6,8 @@
       <% if @issue.jira_url? %>
       <p>This ticket is now tracked at: <a href="<%= @issue.jira_url %>"><%= @issue.jira_url %></a></p>
       <% elsif jira_export_available %>
-      <p>Interested in this issue? <%= link_to("Click here to export this ticket to JIRA.", { :controller => 'issues', :action => 'export_to_jira',   :id => @issue }, :method => 'post') %></p>
+      <p>This ticket may be automatically exported to the <%= jira_project %> project on JIRA using the button below:</p>
+      <%= button_to("Export this ticket to JIRA", { :controller => 'issues', :action => 'export_to_jira',   :id => @issue }) %>
       <% else %>
       <p>This issue is currently not available for export. If you are experiencing the issue described below, please file a new ticket in JIRA. Once a new ticket has been created, please add a link to it that points back to this Redmine ticket.</p>
       <% end %>
