@@ -76,7 +76,8 @@ module RedmineJiraExporter
           "description" => @issue.description,
           "issuetype" => {
             "name" => "Bug"
-          }
+          },
+          "labels" => ["redmine"]
         }
       }
 
