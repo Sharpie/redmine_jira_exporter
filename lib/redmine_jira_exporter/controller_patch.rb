@@ -66,6 +66,16 @@ module RedmineJiraExporter
       client = Net::HTTP.new jira_baseurl.host, jira_baseurl.port
       client.use_ssl = jira_baseurl.scheme == 'https'
 
+      labels = ['redmine']
+      # This bit is specific to the Puppet Labs Redmine tracker. I feel bad for
+      # hardcoding it. If some other programmer outside of PL sees this... feel
+      # free to delete the next block of lines.
+      keyword_field = IssueCustomField.where(:name => 'Keywords').first
+      unless keyword_field.nil?
+        keywords = @issue.custom_values.select{|v| v.custom_field_id == keyword_field.id}.first.value
+        labels << 'customer' if keywords.include? 'customer'
+      end
+
       issue_data = {
         "fields" => {
           "project" =>
@@ -77,7 +87,7 @@ module RedmineJiraExporter
           "issuetype" => {
             "name" => "Bug"
           },
-          "labels" => ["redmine"]
+          "labels" => labels
         }
       }
 
