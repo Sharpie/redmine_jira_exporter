@@ -1,9 +1,9 @@
 class CreateJiraExports < ActiveRecord::Migration
   def up
-    add_column :issues, :jira_url, :string
+    add_column :issues, :jira_key, :string
   end
 
   def down
-    remove_column :issues, :jira_url
+    remove_column :issues, :jira_key
   end
 end

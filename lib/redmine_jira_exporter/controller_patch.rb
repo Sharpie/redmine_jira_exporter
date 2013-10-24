@@ -34,8 +34,8 @@ module RedmineJiraExporter
 
       return false unless project.module_enabled?(:jira_export)
 
-      if @issue.jira_url?
-        Rails.logger.warn "jira_export_controller: Issue already exported to #{@issue.jira_url}"
+      if @issue.jira_key?
+        Rails.logger.warn "jira_export_controller: Issue already exported to #{@issue.jira_key}"
         return false
       end
 
@@ -90,18 +90,17 @@ module RedmineJiraExporter
         Rails.logger.error "jira_export_controller: JIRA issue creation failed with code: #{resp.code}"
         return false
       end
-      jira_id = JSON.load(resp.body)['key']
 
-      # At this point, the ticket has been created in JIRA, so save the URL to
+      # At this point, the ticket has been created in JIRA, so save the key to
       # the database
-      @issue.jira_url = File.join(jira_baseurl.to_s, 'browse', jira_id)
+      @issue.jira_key = JSON.load(resp.body)['key']
       @issue.save
 
       # Also persist a new Journal entry to trigger email notifications.
       journal_note = <<-EOF
 Redmine Issue [##{@issue.id}](#{url_for(@issue)}) has been migrated to JIRA:
 
-  <#{@issue.jira_url}>
+  <#{File.join(jira_baseurl.request_uri, 'browse', @issue.jira_key)}>
         EOF
       @issue.init_journal(User.current, journal_note).save
 
@@ -123,7 +122,7 @@ Redmine Issue [##{@issue.id}](#{url_for(@issue)}) has been migrated to JIRA:
           }
         }
 
-        request = Net::HTTP::Post.new File.join(jira_baseurl.request_uri, jira_api_path, 'issue', jira_id, 'remotelink')
+        request = Net::HTTP::Post.new File.join(jira_baseurl.request_uri, jira_api_path, 'issue', @issue.jira_key, 'remotelink')
         request.basic_auth jira_username, jira_password
         request.body = remote_link_data.to_json
         request['content-type'] = 'application/json'

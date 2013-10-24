@@ -31,11 +31,12 @@ module RedmineJiraExporter
         return ''
       end
 
-      unless issue.has_attribute? :jira_url
-        Rails.logger.error "jira_export_hook: Issue objects do not have the jira_url column. A database migration may be required. View hook aborting."
+      unless issue.has_attribute? :jira_key
+        Rails.logger.error "jira_export_hook: Issue objects do not have the jira_key column. A database migration may be required. View hook aborting."
         return ''
       end
 
+      context[:jira_issue_url] = File.join(RedmineJiraExporter.settings[:jira_baseurl], 'browse', issue.jira_key) if issue.jira_key?
       context[:jira_export_available] = (not jira_project.nil?) && (not issue.closed?) && user.allowed_to?(:create_jira_exports, project)
       context[:jira_project] = jira_project if context[:jira_export_available]
       render context, :partial => 'issues/jira_export'

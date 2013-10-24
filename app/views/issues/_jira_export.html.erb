@@ -3,8 +3,8 @@
     <div class="flash warning">
       <h1>We've Moved!</h1>
       <p>Ticket tracking is now hosted in JIRA: <a href="<%= RedmineJiraExporter.settings[:jira_baseurl] %>"><%= RedmineJiraExporter.settings[:jira_baseurl] %></a></p>
-      <% if @issue.jira_url? %>
-      <p>This ticket is now tracked at: <a href="<%= @issue.jira_url %>"><%= @issue.jira_url %></a></p>
+      <% if @issue.jira_key? %>
+      <p>This ticket is now tracked at: <a href="<%= jira_issue_url %>"><%= jira_issue_url %></a></p>
       <% elsif jira_export_available %>
       <p>This ticket may be automatically exported to the <%= jira_project %> project on JIRA using the button below:</p>
       <%= button_to("Export this ticket to JIRA", { :controller => 'issues', :action => 'export_to_jira',   :id => @issue }) %>
