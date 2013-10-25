@@ -1,14 +1,17 @@
 ---
 # Configuration file for Redmine JIRA exporter
 #
-#  :jira_baseurl => The URL of the JIRA instance receiving tickets
+#  :jira_baseurl  => The URL of the JIRA instance receiving tickets
 #  :jira_username => The username to be used for REST calls to JIRA
 #  :jira_password => the password to be used for REST calls to JIRA
-#  :project_map => A hash where the keys are Redmine project names and
-#                  the values are corresponding JIRA project shortnames
+#  :send_email    => Boolean value indicating whether to send email
+#                    updates to Redmine watchers after exporting a ticket
+#  :project_map   => A hash where the keys are Redmine project names
+#                    and the values are corresponding JIRA project shortnames
 
 #:jira_baseurl:  https://jira.example.com
 #:jira_username: redmine-export
 #:jira_password: somepassword
+#:send_email: false
 #:project_map:
 #  'some redmine project': TEST
