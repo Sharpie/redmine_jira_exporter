@@ -8,6 +8,8 @@
 #                    updates to Redmine watchers after exporting a ticket
 #  :project_map   => A hash where the keys are Redmine project names
 #                    and the values are corresponding JIRA project shortnames
+#  :ticket_map    => A hash that associates Redmine tracker names with
+#                    JIRA ticket types.
 
 #:jira_baseurl:  https://jira.example.com
 #:jira_username: redmine-export
@@ -15,3 +17,5 @@
 #:send_email: false
 #:project_map:
 #  'some redmine project': TEST
+#:ticket_map:
+#  'Feature': 'New Feature'

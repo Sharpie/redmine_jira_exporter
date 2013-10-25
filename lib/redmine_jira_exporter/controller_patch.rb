@@ -76,6 +76,9 @@ module RedmineJiraExporter
         labels << 'customer' if keywords.include? 'customer'
       end
 
+      jira_ticket_type = RedmineJiraExporter.settings[:ticket_map][@issue.tracker.name]
+      jira_ticket_type ||= 'Bug' # Default if no value was provided.
+
       issue_data = {
         "fields" => {
           "project" =>
@@ -85,7 +88,7 @@ module RedmineJiraExporter
           "summary" => @issue.subject,
           "description" => @issue.description,
           "issuetype" => {
-            "name" => "Bug"
+            "name" => jira_ticket_type
           },
           "labels" => labels
         }
