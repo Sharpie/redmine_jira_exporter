@@ -11,6 +11,10 @@ module RedmineJiraExporter
       project = @issue.project
 
       unless User.current.allowed_to? :create_jira_exports, project
+        # deny_access will send the user to a login page and then re-try this
+        # POST request as a GET --- which will fail. Set the action to "show"
+        # so that the user is dropped back at the issue view.
+        params[:action] = 'show'
         deny_access
         return
       end

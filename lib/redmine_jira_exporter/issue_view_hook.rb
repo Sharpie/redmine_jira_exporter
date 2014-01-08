@@ -37,7 +37,7 @@ module RedmineJiraExporter
       end
 
       context[:jira_issue_url] = File.join(RedmineJiraExporter.settings[:jira_baseurl], 'browse', issue.jira_key) if issue.jira_key?
-      context[:jira_export_available] = (not jira_project.nil?) && (not issue.closed?) && user.allowed_to?(:create_jira_exports, project)
+      context[:jira_export_available] = (not jira_project.nil?) && (not issue.closed?)
       context[:jira_project] = jira_project if context[:jira_export_available]
       render context, :partial => 'issues/jira_export'
     end
